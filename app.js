@@ -10,7 +10,7 @@ const CATS={
   kiosk:{label:'Spati / kiosk',q:'["shop"~"kiosk|convenience"]'},
   bar:{label:'Bar',q:'["amenity"~"bar|pub"]'},
 };
-const ENDPOINTS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter'];
+const ENDPOINTS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter','https://lz4.overpass-api.de/api/interpreter','https://z.overpass-api.de/api/interpreter'];
 const $=id=>document.getElementById(id);
 const state={pos:{lat:52.5200,lon:13.4050},cats:new Set(['pharmacy']),radius:1000,open:false,items:[],favs:[]};
 const map=L.map('map',{zoomControl:false}).setView([state.pos.lat,state.pos.lon],15);
@@ -60,7 +60,7 @@ async function search(){
         addr:[t['addr:street'],t['addr:housenumber']].filter(Boolean).join(' '),fav:false};
     }).filter(i=>i.lat);
     render();
-  }catch(e){if(my===seq)$('status').textContent='Overpass is busy, try again'}
+  }catch(e){if(my===seq){state.items=[];render();$('status').textContent+=' (live data busy - tap the map to retry)'}}
 }
 function matches(c,t){const m=[...CATS[c].q.matchAll(/\["(\w+)"(~|=)"([^"]+)"\]/g)][0];
   return m[2]==='='?t[m[1]]===m[3]:new RegExp(m[3]).test(t[m[1]]||'')}
