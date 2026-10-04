@@ -1,4 +1,4 @@
-const V='v2';
+const V='v3';
 const SHELL='shell-'+V, DATA='data-'+V, TILES='tiles-v1';
 const MAX_TILES=3500; // ~50 MB at ~15 KB per tile
 const SHELL_FILES=['./','index.html','style.css','app.js','hours.js','favorites.json','manifest.webmanifest','icon.svg',
@@ -44,7 +44,7 @@ self.addEventListener('fetch',e=>{
     e.respondWith((async()=>{
       const c=await caches.open(isData?DATA:SHELL);
       const hit=await c.match(req,{ignoreSearch:true});
-      const net=fetch(req).then(r=>{if(r.ok)c.put(req,r.clone());return r}).catch(()=>null);
+      const net=fetch(req,{cache:'no-cache'}).then(r=>{if(r.ok)c.put(req,r.clone());return r}).catch(()=>null);
       return hit||(await net)||new Response('[]',{status:504});
     })());
     return;
@@ -52,7 +52,7 @@ self.addEventListener('fetch',e=>{
   if(url.origin===location.origin||url.hostname==='unpkg.com'){
     e.respondWith((async()=>{
       const hit=await caches.match(req,{ignoreSearch:true});
-      if(hit){e.waitUntil(fetch(req).then(async r=>{if(r.ok)(await caches.open(SHELL)).put(req,r)}).catch(()=>{}));return hit}
+      if(hit){e.waitUntil(fetch(req,{cache:'no-cache'}).then(async r=>{if(r.ok)(await caches.open(SHELL)).put(req,r)}).catch(()=>{}));return hit}
       try{const r=await fetch(req);
         if(r.ok){const c=await caches.open(SHELL);c.put(req,r.clone())}
         return r}catch(err){
