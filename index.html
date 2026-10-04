@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>nahdran</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header><h1>nahdran<span>.</span></h1><button id="gps">&#9678; My location</button></header>
+<div id="map"></div>
+<section id="panel">
+  <div id="cats"></div>
+  <div class="row">
+    <label>Radius <b id="rv">1 km</b></label>
+    <input type="range" id="radius" min="250" max="5000" step="250" value="1000">
+  </div>
+  <div class="row"><label class="chk"><input type="checkbox" id="open"> Open now</label>
+  <span id="status">Tap the map to set a spot</span></div>
+  <ul id="list"></ul>
+  <p class="foot">Data &copy; OpenStreetMap contributors. Opening hours come from OSM and may be missing or off.</p>
+</section>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="hours.js"></script>
+<script src="app.js"></script>
+</body></html>
