@@ -55,8 +55,9 @@ function render(){
     L.circleMarker([i.lat,i.lon],{radius:i.fav?7:5,color:i.fav?'#fb8f62':'#888',fillColor:i.fav?'#fb8f62':'#bbb',fillOpacity:.9,weight:1}).addTo(layer).bindPopup(i.name);
     const li=document.createElement('li');if(i.fav)li.className='fav';
     const b=i.open===true?'<span class="b o">open now</span>':i.open===false?'<span class="b c">closed</span>':'<span class="b u">hours unknown</span>';
+    const gm='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(i.name+' '+i.lat+','+i.lon);
     const url=`https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=${lat},${lon};${i.lat},${i.lon}`;
-    li.innerHTML=`<div><div class="n">${i.fav?'&#9733; ':''}${esc(i.name)}</div><div class="s">${esc(CATS[i.cat]?.label||'')}${i.addr?' - '+esc(i.addr):''}</div>${b}${i.oh?`<div class="s">${esc(i.oh)}</div>`:''}</div><div class="d">${fmtD(i.d)}<br><a href="${url}" target="_blank" rel="noopener">walk</a></div>`;
+    li.innerHTML=`<div><div class="n">${i.fav?'&#9733; ':''}${esc(i.name)}</div><div class="s">${esc(CATS[i.cat]?.label||'')}${i.addr?' - '+esc(i.addr):''}</div>${b}${i.oh?`<div class="s">${esc(i.oh)}</div>`:''}</div><div class="d">${fmtD(i.d)}<br><a href="${url}" target="_blank" rel="noopener">walk</a><br><a href="${gm}" target="_blank" rel="noopener">Google Maps</a></div>`;
     li.onclick=e=>{if(e.target.tagName!=='A'){setSheet(1);map.setView([i.lat,i.lon],17)}};
     $('list').appendChild(li);
   }
