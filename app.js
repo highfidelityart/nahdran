@@ -85,7 +85,7 @@ window.addEventListener('offline',()=>$('fresh').textContent+=' Offline: map til
 const sheet=$('sheet'),grab=$('grab');
 const snaps=()=>{const H=innerHeight;return [92,Math.min(300,H*.4),H-(innerWidth>=800?60:90)]};
 let snap=1;
-function setSheet(i){snap=i;sheet.style.setProperty('--sh',snaps()[i]+'px')}
+function setSheet(i){snap=i;sheet.classList.toggle('full',i===2);sheet.style.setProperty('--sh',snaps()[i]+'px')}
 setSheet(1);addEventListener('resize',()=>setSheet(snap));
 let drag=null;
 grab.addEventListener('pointerdown',e=>{grab.setPointerCapture(e.pointerId);drag={y:e.clientY,h:sheet.offsetHeight,moved:false};sheet.classList.add('drag')});
