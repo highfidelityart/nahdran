@@ -5,10 +5,16 @@
 <title>nahdran</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.webmanifest">
+
+<meta name="theme-color" content="#0d0d0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head><body>
-<header><h1>nahdran<span>.</span></h1><button id="gps">&#9678; My location</button></header>
 <div id="map"></div>
-<section id="panel">
+<header><h1>nahdran<span>.</span></h1><button id="gps">&#9678; My location</button></header>
+<section id="sheet">
+  <div id="grab" aria-label="Drag or tap to expand the list"><span></span></div>
   <div id="cats"></div>
   <div class="row">
     <label>Radius <b id="rv">1 km</b></label>
@@ -17,6 +23,7 @@
   <div class="row"><label class="chk"><input type="checkbox" id="open"> Open now</label>
   <span id="status">Tap the map to set a spot</span></div>
   <ul id="list"></ul>
+  <p class="foot" id="fresh"></p>
   <p class="foot">Data &copy; OpenStreetMap contributors. Opening hours come from OSM and may be missing or off.</p>
 </section>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
