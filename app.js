@@ -10,11 +10,11 @@ const CATS={
   kiosk:{label:'Spati / kiosk',q:'["shop"~"kiosk|convenience"]'},
   bar:{label:'Bar',q:'["amenity"~"bar|pub"]'},
 };
-const ENDPOINTS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter','https://lz4.overpass-api.de/api/interpreter','https://z.overpass-api.de/api/interpreter'];
 const $=id=>document.getElementById(id);
 const state={pos:{lat:52.5200,lon:13.4050},cats:new Set(['pharmacy']),radius:1000,open:false,items:[],favs:[]};
-const map=L.map('map',{zoomControl:false}).setView([state.pos.lat,state.pos.lon],15);
+const map=L.map('map',{zoomControl:false,attributionControl:false}).setView([state.pos.lat,state.pos.lon],15);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
+L.control.attribution({position:'topleft',prefix:false}).addTo(map);
 const me=L.circleMarker([state.pos.lat,state.pos.lon],{radius:8,color:'#fff',fillColor:'#fb8f62',fillOpacity:1,weight:2}).addTo(map);
 const ring=L.circle([state.pos.lat,state.pos.lon],{radius:state.radius,color:'#fb8f62',weight:1,fillOpacity:.05}).addTo(map);
 const layer=L.layerGroup().addTo(map);
@@ -26,44 +26,21 @@ function setPos(lat,lon,fly){
   if(fly)map.setView([lat,lon],Math.max(map.getZoom(),15));
   search();
 }
-async function overpass(q){
-  const key='op:'+q,c=sessionStorage.getItem(key);
-  if(c)try{return JSON.parse(c)}catch(e){}
-  let err;
-  for(let attempt=0;attempt<2;attempt++){
-    try{
-      const els=await Promise.any(ENDPOINTS.map(async u=>{
-        const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),15000);
-        try{const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(q),signal:ctl.signal});
-          if(!r.ok)throw new Error(r.status);return (await r.json()).elements}finally{clearTimeout(t)}
-      }));
-      try{sessionStorage.setItem(key,JSON.stringify(els))}catch(e){}
-      return els;
-    }catch(e){err=e}
-  }
-  throw err;
+let ALL=[];let generated=null;
+async function loadPlaces(){
+  try{const idx=await (await fetch('data/index.json')).json();generated=idx.generated;
+    const parts=await Promise.all(Array.from({length:idx.parts},(_,i)=>fetch('data/places-'+i+'.json').then(r=>r.json())));
+    ALL=parts.flat().map(p=>({cat:p[0],lat:p[1],lon:p[2],name:p[3],addr:p[4],oh:p[5]}));
+    const when=new Date(generated).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    $('fresh').textContent='Place data from '+when+' ('+ALL.length.toLocaleString('en')+' places, refreshed weekly).';
+  }catch(e){$('status').textContent='Could not load places data'}
 }
-let seq=0;
-async function search(){
-  const my=++seq,{lat,lon}=state.pos;
+function search(){
   ring.setRadius(state.radius);
-  if(!state.cats.size){state.items=[];render();return}
-  $('status').textContent='Searching...';
-  const parts=[...state.cats].map(c=>`nwr${CATS[c].q}(around:${state.radius},${lat},${lon});`).join('');
-  try{
-    const els=await overpass(`[out:json][timeout:25];(${parts});out center tags;`);
-    if(my!==seq)return;
-    state.items=els.map(e=>{
-      const t=e.tags||{},la=e.lat??e.center?.lat,lo=e.lon??e.center?.lon;
-      const cat=[...state.cats].find(c=>matches(c,t))||'';
-      return{name:t.name||t.brand||CATS[cat]?.label||'Unnamed',cat,lat:la,lon:lo,oh:t.opening_hours,
-        addr:[t['addr:street'],t['addr:housenumber']].filter(Boolean).join(' '),fav:false};
-    }).filter(i=>i.lat);
-    render();
-  }catch(e){if(my===seq){state.items=[];render();$('status').textContent+=' (live data busy - tap the map to retry)'}}
+  const {lat,lon}=state.pos;
+  state.items=ALL.filter(p=>state.cats.has(p.cat)&&dist(lat,lon,p.lat,p.lon)<=state.radius).map(p=>({...p,name:p.name||CATS[p.cat].label,fav:false}));
+  render();
 }
-function matches(c,t){const m=[...CATS[c].q.matchAll(/\["(\w+)"(~|=)"([^"]+)"\]/g)][0];
-  return m[2]==='='?t[m[1]]===m[3]:new RegExp(m[3]).test(t[m[1]]||'')}
 function render(){
   const {lat,lon}=state.pos;
   const favs=state.favs.filter(f=>state.cats.has(f.category)).map(f=>({name:f.name,cat:f.category,lat:f.lat,lon:f.lon,oh:f.opening_hours,addr:f.note,fav:true}));
@@ -80,7 +57,7 @@ function render(){
     const b=i.open===true?'<span class="b o">open now</span>':i.open===false?'<span class="b c">closed</span>':'<span class="b u">hours unknown</span>';
     const url=`https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=${lat},${lon};${i.lat},${i.lon}`;
     li.innerHTML=`<div><div class="n">${i.fav?'&#9733; ':''}${esc(i.name)}</div><div class="s">${esc(CATS[i.cat]?.label||'')}${i.addr?' - '+esc(i.addr):''}</div>${b}${i.oh?`<div class="s">${esc(i.oh)}</div>`:''}</div><div class="d">${fmtD(i.d)}<br><a href="${url}" target="_blank" rel="noopener">walk</a></div>`;
-    li.onclick=e=>{if(e.target.tagName!=='A')map.setView([i.lat,i.lon],17)};
+    li.onclick=e=>{if(e.target.tagName!=='A'){setSheet(1);map.setView([i.lat,i.lon],17)}};
     $('list').appendChild(li);
   }
   $('status').textContent=all.length+' places';
@@ -100,4 +77,21 @@ $('gps').onclick=()=>{
   $('status').textContent='Locating...';
   navigator.geolocation.getCurrentPosition(p=>setPos(p.coords.latitude,p.coords.longitude,true),()=>{$('status').textContent='GPS denied - tap the map instead'},{enableHighAccuracy:true,timeout:10000});
 };
-fetch('favorites.json').then(r=>r.json()).catch(()=>[]).then(f=>{state.favs=f;search()});
+Promise.all([fetch('favorites.json').then(r=>r.json()).catch(()=>[]),loadPlaces()]).then(([f])=>{state.favs=f;search()});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+window.addEventListener('offline',()=>$('fresh').textContent+=' Offline: map tiles only where already viewed.');
+
+// Bottom sheet: min (handle + filters), peek (first results), full
+const sheet=$('sheet'),grab=$('grab');
+const snaps=()=>{const H=innerHeight;return [92,Math.min(300,H*.4),H-(innerWidth>=800?60:90)]};
+let snap=1;
+function setSheet(i){snap=i;sheet.style.setProperty('--sh',snaps()[i]+'px')}
+setSheet(1);addEventListener('resize',()=>setSheet(snap));
+let drag=null;
+grab.addEventListener('pointerdown',e=>{grab.setPointerCapture(e.pointerId);drag={y:e.clientY,h:sheet.offsetHeight,moved:false};sheet.classList.add('drag')});
+grab.addEventListener('pointermove',e=>{if(!drag)return;const dy=drag.y-e.clientY;if(Math.abs(dy)>4)drag.moved=true;
+  const s=snaps();sheet.style.setProperty('--sh',Math.max(s[0],Math.min(s[2],drag.h+dy))+'px')});
+grab.addEventListener('pointerup',e=>{if(!drag)return;sheet.classList.remove('drag');
+  if(!drag.moved){setSheet(snap===0?1:snap===1?2:1)}
+  else{const h=sheet.offsetHeight,s=snaps();setSheet(s.reduce((b,v,i)=>Math.abs(v-h)<Math.abs(s[b]-h)?i:b,0))}
+  drag=null});
