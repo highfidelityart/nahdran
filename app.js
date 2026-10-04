@@ -10,7 +10,7 @@ const CATS={
   kiosk:{label:'Spati / kiosk',q:'["shop"~"kiosk|convenience"]'},
   bar:{label:'Bar',q:'["amenity"~"bar|pub"]'},
 };
-const ENDPOINTS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'];
+const ENDPOINTS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter'];
 const $=id=>document.getElementById(id);
 const state={pos:{lat:52.5200,lon:13.4050},cats:new Set(['pharmacy']),radius:1000,open:false,items:[],favs:[]};
 const map=L.map('map',{zoomControl:false}).setView([state.pos.lat,state.pos.lon],15);
@@ -27,10 +27,19 @@ function setPos(lat,lon,fly){
   search();
 }
 async function overpass(q){
+  const key='op:'+q,c=sessionStorage.getItem(key);
+  if(c)try{return JSON.parse(c)}catch(e){}
   let err;
-  for(const u of ENDPOINTS){
-    try{const r=await fetch(u,{method:'POST',body:'data='+encodeURIComponent(q)});
-      if(!r.ok)throw new Error(r.status);return (await r.json()).elements}catch(e){err=e}
+  for(let attempt=0;attempt<2;attempt++){
+    try{
+      const els=await Promise.any(ENDPOINTS.map(async u=>{
+        const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),15000);
+        try{const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(q),signal:ctl.signal});
+          if(!r.ok)throw new Error(r.status);return (await r.json()).elements}finally{clearTimeout(t)}
+      }));
+      try{sessionStorage.setItem(key,JSON.stringify(els))}catch(e){}
+      return els;
+    }catch(e){err=e}
   }
   throw err;
 }
