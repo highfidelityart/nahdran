@@ -4,15 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>nahdran</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="apple.css">
+<script>(function(){var t=localStorage.getItem("nahdran-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=t})()</script>
 <link rel="manifest" href="manifest.webmanifest">
 
-<meta name="theme-color" content="#0d0d0d">
+<meta name="theme-color" content="#f5f5f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head><body>
 <div id="map"></div>
-<header><h1>nahdran<span>.</span></h1><button id="gps">&#9678; My location</button></header>
+<header><h1>nahdran</h1><div class="hr"><button id="theme" aria-label="Toggle dark or light mode">&#9680;</button><button id="gps">&#9678; My location</button></div></header>
 <section id="sheet">
   <div id="grab" aria-label="Drag or tap to expand the list"><span></span></div>
   <div id="cats"></div>
@@ -29,4 +32,5 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="hours.js"></script>
 <script src="app.js"></script>
+<script>document.getElementById("theme").onclick=function(){var d=document.documentElement,t=d.dataset.theme==="dark"?"light":"dark";d.dataset.theme=t;localStorage.setItem("nahdran-theme",t);var m=document.querySelector("meta[name=theme-color]");if(m)m.content=t==="dark"?"#000000":"#f5f5f7"}</script>
 </body></html>
