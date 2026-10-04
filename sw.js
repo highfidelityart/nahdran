@@ -1,7 +1,7 @@
-const V='v3';
+const V='v4';
 const SHELL='shell-'+V, DATA='data-'+V, TILES='tiles-v1';
 const MAX_TILES=3500; // ~50 MB at ~15 KB per tile
-const SHELL_FILES=['./','index.html','style.css','app.js','hours.js','favorites.json','manifest.webmanifest','icon.svg',
+const SHELL_FILES=['./','index.html','apple.css','app.js','hours.js','favorites.json','manifest.webmanifest','icon.svg',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
 self.addEventListener('install',e=>{
   e.waitUntil((async()=>{
