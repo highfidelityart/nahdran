@@ -15,7 +15,8 @@ button{background:var(--acc);color:#111;border:0;border-radius:20px;padding:9px 
 #grab{flex:none;height:26px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab}
 #grab span{width:42px;height:5px;border-radius:3px;background:#555}
 #list{flex:1;overflow-y:auto;overscroll-behavior:contain;min-height:0}
-.foot{flex:none}
+.foot{flex:none;display:none;margin:6px 0}
+#sheet.full .foot{display:block}
 @media(min-width:800px){#sheet{left:12px;right:auto;bottom:12px;width:420px;border-radius:16px;border:1px solid var(--line)}}
 #cats{flex:none;display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
 .chip{flex:none;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:18px;padding:6px 12px;font-weight:500}
