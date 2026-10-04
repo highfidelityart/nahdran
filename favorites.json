@@ -1,0 +1,82 @@
+[
+  {
+    "name": "The Barn",
+    "note": "Alte Potsdamer Straße 5",
+    "category": "cafe",
+    "lat": 52.5083684,
+    "lon": 13.3746993,
+    "opening_hours": "Mo-Fr 08:30-19:00, Sa,Su 09:00-19:00"
+  },
+  {
+    "name": "The Barn",
+    "note": "Invalidenstraße 112",
+    "category": "cafe",
+    "lat": 52.5305927,
+    "lon": 13.3837117,
+    "opening_hours": "Mo-Su,PH 08:00-18:00"
+  },
+  {
+    "name": "The Barn",
+    "note": "Schönhauser Allee 8",
+    "category": "cafe",
+    "lat": 52.5299353,
+    "lon": 13.4106932,
+    "opening_hours": "Mo-Fr 08:30-18:00; Sa-Su 10:00-18:00"
+  },
+  {
+    "name": "The Barn",
+    "note": "Friedrichstraße 25",
+    "category": "cafe",
+    "lat": 52.5058194,
+    "lon": 13.3904613,
+    "opening_hours": "Mo-Fr 08:00-18:00; Sa-Su 10:00-18:00"
+  },
+  {
+    "name": "The Barn",
+    "note": "Auguststraße 58",
+    "category": "cafe",
+    "lat": 52.5274504,
+    "lon": 13.3981267,
+    "opening_hours": "Mo-Fr 08:00-18:00, Sa 09:00-18:00, Su 10:00-18:00"
+  },
+  {
+    "name": "The Barn",
+    "note": "Neue Schönhauser Straße 12",
+    "category": "cafe",
+    "lat": 52.5245299,
+    "lon": 13.4041265,
+    "opening_hours": "Mo-Fr 09:00-20:00; Sa-Su 10:00-20:00"
+  },
+  {
+    "name": "The Barn",
+    "note": "Friedelstraße 27",
+    "category": "cafe",
+    "lat": 52.4923996,
+    "lon": 13.4282383,
+    "opening_hours": "Mo-Fr 10:00-18:00; Sa, Su, PH 11:00-18:00"
+  },
+  {
+    "name": "The Barn",
+    "note": "Weinbergsweg 1",
+    "category": "cafe",
+    "lat": 52.5300472,
+    "lon": 13.4017743,
+    "opening_hours": "Mo-Fr 08:00-18:00; Sa-Su 10:00-18:00"
+  },
+  {
+    "name": "The Barn",
+    "note": "Bellevuestraße 1",
+    "category": "cafe",
+    "lat": 52.5100523,
+    "lon": 13.3744478,
+    "opening_hours": "Mo-Fr 09:00-18:00; Sa-Su 10:00-18:00"
+  },
+  {
+    "name": "MediosApotheke am Oranienburger Tor",
+    "note": "Friedrichstraße 113a - open every Sunday 8-24",
+    "category": "pharmacy",
+    "lat": 52.5260899,
+    "lon": 13.3875545,
+    "opening_hours": "Mo-Su 08:00-24:00"
+  }
+]
