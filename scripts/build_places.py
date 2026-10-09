@@ -15,10 +15,10 @@ CATS = {
     "kiosk": '["shop"~"^(kiosk|convenience)$"]',
     "bar": '["amenity"~"^(bar|pub)$"]',
 }
-ENDPOINTS = ["https://overpass.private.coffee/api/interpreter",
+ENDPOINTS = ["https://overpass.openstreetmap.fr/api/interpreter",
+             "https://overpass.private.coffee/api/interpreter",
              "https://overpass.kumi.systems/api/interpreter",
              "https://overpass-api.de/api/interpreter",
-             "https://overpass.openstreetmap.fr/api/interpreter",
              "https://z.overpass-api.de/api/interpreter"]
 
 def tiles(n=3):
